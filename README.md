@@ -364,3 +364,162 @@ Further readings - Sorting with map.
 Trailer of topic: The `compareFunction` can be invoked multiple times per element within the array.
 Depending on the `compareFunction` nature, this may yield a high overhead. The more work a `compareFunction` does and the more elements there are to sort, the wiser it may be to consider using a map for sorting. The idea is to walk the array once to extract the actual values used for sorting into a temporary array, sort the temporary array and then walk the temporary array to achieve the right order. We will come back to this topic once we know something about JS maps.
 
+## 3. `Array.prototype.filter`
+The filter() method creates a new array with all elements that pass the test implemented by the provided function
+
+_demo\_010.js_
+
+``` javascript
+//Array.prototype.filter demo: similar to Array.prototype.find method.
+//In this demo we will take some words and will filter then according to the number of letters they have
+
+let words = [ "spray", "limit", "elite", "exuberant", "destruction", "apocalypse", "marvellous" ];
+
+//clearing the terminal
+console.log("\033c");
+
+let longWords = words.filter(function(word) {
+  return word.length > 6;
+});
+
+console.log("words having length greater than 6: ", longWords);
+
+```
+
+Here in above example we are supplying a filter function to `Array.prototype.filter` method. In that filter function we are getting 'words' that has length of more than '6'.
+
+Lets do the same thing with a little modification to the code in ES6
+
+_demo\_011.js_
+
+``` javascript
+//...same as before
+let longWords = words.filter(word => word.length > 6);
+console.log("Words having length greater than 6: " + longWords);
+
+```
+
+To know more about fat arrow function of ES6 read ES6 documentation from my repository.
+
+#### Filtering out numeric values. 
+This demo will filter out all the elements that are smaller than 99 from the given arrays. 
+
+- Lets assume you have a array having elements [1001, 21, 50, 901, 100, 13]
+- Now we will create a function that will take these numbers as argument and compare the number to 99, if greater than return true otherwise false. 
+
+_demo\_012.js_
+ 
+``` javascript
+// filter out elements to get numbers less than 99
+let chalk = require("chalk");
+
+console.log("\033c");
+
+function isBigEnough(value) {
+  return value >= 99;
+}
+
+let filtered = [1001, 21, 50, 901, 100, 13].filter(isBigEnough);
+console.log("numbers greater than 99: " + chalk.green(filtered.join()));
+```
+
+#### Filtering invalid entries from JSON
+
+In this demo we will remove the 'id' fields in a JSON array that contains non numbers, negative numbers and 0.
+
+_demo\_012.js_
+
+``` javascript
+let arr = [
+  { id: 20 },
+  { id: -2 },
+  { id: 0 },
+  { id: 18.9 },
+  { id: null },
+  { id: NaN },
+  { id: "undefined" },
+  {},
+  { id: 6 }
+];
+
+let invalidEntries = 0;
+
+function isNumber(obj) {
+  return obj !== undefined && typeof obj === "number" && !isNaN(obj);
+}
+
+function filterById(item) {
+  if (isNumber(item.id)) {
+    return true;
+  }
+  invalidEntries++;
+  return false;
+}
+
+let arrById = arr.filter(filterById);
+
+console.log("Filtered Array\n" + chalk.green(JSON.stringify(arrById)));
+
+console.log("Number of invalid Entries = " + chalk.red(invalidEntries));
+```
+
+Lets have a look at the result 
+
+```
+Filtered Array
+[{"id":20},{"id":-2},{"id":0},{"id":18.9},{"id":6}]
+Number of invalid Entries = 4
+```
+
+Here as you can see it is also returning id: -2 which is a invalid field for us so to solve this problem add one more condition to `isNumber` ie. `obj >0` this will check whether the object is greater than 0 or not if false, it's an invalid field that needs to be removed. Now check result. 
+
+Now our invalid count must be `6` as all negatives and zeros are removed from the ids.
+
+#### Searching in array
+In this demo we will create an filter function that will give the result according to query. Lets start by writing code
+
+_demo\_013.js_
+
+``` javascript
+//demo to show filter function returning values according to query
+let fruits = ["apple", "banana", "grapes", "mango", "orange"];
+
+//clearing the terminal
+console.log("\033c");
+
+function filterItems(query) {
+  return fruits.filter(function(element) {
+    return element.toLowerCase().indexOf(query) > -1;
+  });
+}
+
+console.log(filterItems("ap"));
+console.log(filterItems("an"));
+```
+
+This function will search for 'ap' in first cosole statement and the result will be `'apple', 'grapes'`
+The second function gets results matching 'an'. Result : `'banana', 'mango', 'orange'`
+
+Now writing this same function with ES6 code
+
+_demo\_014.js_
+
+
+``` javascript
+// Es6 implementation of filter data according to query
+
+console.log("\033c");
+const fruits = ["apple", "banana", "grapes", "mango", "orange"];
+
+console.log("\033c");
+
+const filterItems = (query) => {
+  return fruits.filter((el) => el.toLowerCase().indexOf(query.toLowerCase()) > -1);
+};
+
+console.log("fruits containing 'ap' in their name: " + filterItems("ap"));
+console.log("fruits containing 'an' in their name: " + filterItems("an"));
+
+```
+
+Thats a wrap up for this module for now. 
